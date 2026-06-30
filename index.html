@@ -6,7 +6,6 @@
   <title>DHS Customer Satisfaction Survey</title>
   <style>
     :root {
-      /* Changed to a solid light background color */
       --bg: #f1f4f9; 
       --surface: #ffffff;
       --surface-soft: #f8fafc;
@@ -29,7 +28,6 @@
     body {
       margin: 0;
       font-family: var(--font);
-      /* Removed all radial-gradients to apply only the solid background color */
       background: var(--bg);
       color: var(--text);
       line-height: 1.5;
@@ -144,7 +142,6 @@
     .sidebar {
       position: sticky;
       top: 20px;
-      /* Adjusted to a solid white backdrop instead of translucent blur */
       background: #ffffff;
       border: 1px solid rgba(219, 227, 239, 0.95);
       border-radius: var(--radius);
@@ -245,6 +242,16 @@
       box-shadow: 0 10px 22px rgba(255, 122, 26, 0.27);
     }
 
+    .submit-btn {
+      background: var(--blue);
+      color: white;
+      box-shadow: 0 10px 22px rgba(30, 79, 215, 0.25);
+      width: 100%;
+      padding: 16px;
+      font-size: 16px;
+      margin-top: 15px;
+    }
+
     .secondary-btn {
       background: #eef2f7;
       color: var(--text);
@@ -302,7 +309,7 @@
       align-items: center;
       padding: 22px 24px;
       border-bottom: 1px solid var(--line);
-      background: #ffffff; /* Changed panel header background to a flat solid color */
+      background: #ffffff;
       border-radius: var(--radius) var(--radius) 0 0;
     }
 
@@ -517,85 +524,95 @@
   </style>
 </head>
 <body>
-  <!-- Rest of your original body elements remain completely unchanged -->
-  <div class="page-shell">
-    <header class="hero">
-      <div class="hero-grid">
-        <div>
-          <div class="eyebrow">DHS Customer Feedback</div>
-          <h1>Customer Satisfaction Survey</h1>
-          <p>
-            Help us improve the quality, reliability, security, and responsiveness of DELMIA Hosted Services.
-            Most questions use a 1–5 scale, with optional comments for open feedback.
-          </p>
-        </div>
-        <div class="hero-card">
-          <strong>Rating scale</strong>
-          <p style="margin-top:8px;font-size:14px;">1 = Very dissatisfied / poor, 5 = Very satisfied / excellent</p>
-          <div class="metric-row">
-            <div class="metric"><strong>9</strong><span>Sections</span></div>
-            <div class="metric"><strong>23</strong><span>Questions</span></div>
-            <div class="metric"><strong>5</strong><span>Rating levels</span></div>
-          </div>
-        </div>
-      </div>
-    </header>
+  <!-- Embedded the Data Endpoint inside the HTML Form Element Structuring -->
+  <form id="surveyForm" action="https://api.web3forms.com/submit" method="POST">
+    <input type="hidden" name="access_key" value="330fbc2a-f9ac-4997-889b-1dfa83476d56">
+    
+    <!-- Hidden input configuration to provide native dashboard page redirect control -->
+    <input type="hidden" name="from_name" value="DHS Survey Portal">
+    <input type="hidden" name="subject" value="New Customer Satisfaction Feedback Received">
 
-    <div class="layout">
-      <aside class="sidebar">
-        <div class="progress-label">
-          <span>Completion</span>
-          <small id="progressText">0%</small>
-        </div>
-        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-        <ul class="nav-list">
-          <li><a href="#overall"><span class="nav-bullet">1</span>Overall Satisfaction</a></li>
-          <li><a href="#availability"><span class="nav-bullet">2</span>Availability & Stability</a></li>
-          <li><a href="#support"><span class="nav-bullet">3</span>Support</a></li>
-          <li><a href="#communication"><span class="nav-bullet">4</span>Communication</a></li>
-          <li><a href="#incident"><span class="nav-bullet">5</span>Incident Management</a></li>
-          <li><a href="#expertise"><span class="nav-bullet">6</span>Technical Expertise</a></li>
-          <li><a href="#change"><span class="nav-bullet">7</span>Change Management</a></li>
-          <li><a href="#security"><span class="nav-bullet">8</span>Security & Compliance</a></li>
-          <li><a href="#feedback"><span class="nav-bullet">9</span>Open Feedback</a></li>
-        </ul>
-        <div class="actions">
-          <button class="primary-btn" type="button" onclick="downloadJSON()">Export JSON</button>
-          <button class="secondary-btn" type="button" onclick="downloadCSV()">Export CSV</button>
-          <button class="secondary-btn" type="button" onclick="window.print()">Print / Save PDF</button>
-        </div>
-      </aside>
-
-      <main class="content">
-        <section class="intro-panel" aria-label="Customer information">
-          <div class="field">
-            <label for="customerName">Customer / Organization</label>
-            <input id="customerName" name="customerName" type="text" placeholder="e.g., Customer name" />
-          </div>
-          <div class="field">
-            <label for="respondentName">Respondent Name</label>
-            <input id="respondentName" name="respondentName" type="text" placeholder="Optional" />
-          </div>
-          <div class="field">
-            <label for="respondentRole">Role / Function</label>
-            <input id="respondentRole" name="respondentRole" type="text" placeholder="e.g., Project Manager, IT Owner" />
-          </div>
-        </section>
-
-        <form id="surveyForm">
-          <div id="sections"></div>
-        </form>
-
-        <section class="footer-note">
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-grid">
           <div>
-            <strong>Thank you for your feedback.</strong><br />
-            Your responses help DHS prioritize service improvements, communication quality, security, and operational excellence.
+            <div class="eyebrow">DHS Customer Feedback</div>
+            <h1>Customer Satisfaction Survey</h1>
+            <p>
+              Help us improve the quality, reliability, security, and responsiveness of DELMIA Hosted Services.
+              Most questions use a 1–5 scale, with optional comments for open feedback.
+            </p>
           </div>
-          <button class="primary-btn" type="button" onclick="validateSurvey()">Review Completion</button>
-        </section>
-      </main>
+          <div class="hero-card">
+            <strong>Rating scale</strong>
+            <p style="margin-top:8px;font-size:14px;">1 = Very dissatisfied / poor, 5 = Very satisfied / excellent</p>
+            <div class="metric-row">
+              <div class="metric"><strong>9</strong><span>Sections</span></div>
+              <div class="metric"><strong>23</strong><span>Questions</span></div>
+              <div class="metric"><strong>5</strong><span>Rating levels</span></div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="layout">
+        <aside class="sidebar">
+          <div class="progress-label">
+            <span>Completion</span>
+            <small id="progressText">0%</small>
+          </div>
+          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+          <ul class="nav-list">
+            <li><a href="#overall"><span class="nav-bullet">1</span>Overall Satisfaction</a></li>
+            <li><a href="#availability"><span class="nav-bullet">2</span>Availability & Stability</a></li>
+            <li><a href="#support"><span class="nav-bullet">3</span>Support</a></li>
+            <li><a href="#communication"><span class="nav-bullet">4</span>Communication</a></li>
+            <li><a href="#incident"><span class="nav-bullet">5</span>Incident Management</a></li>
+            <li><a href="#expertise"><span class="nav-bullet">6</span>Technical Expertise</a></li>
+            <li><a href="#change"><span class="nav-bullet">7</span>Change Management</a></li>
+            <li><a href="#security"><span class="nav-bullet">8</span>Security & Compliance</a></li>
+            <li><a href="#feedback"><span class="nav-bullet">9</span>Open Feedback</a></li>
+          </ul>
+          <div class="actions">
+            <button class="primary-btn" type="button" onclick="downloadJSON()">Export JSON</button>
+            <button class="secondary-btn" type="button" onclick="downloadCSV()">Export CSV</button>
+            <button class="secondary-btn" type="button" onclick="window.print()">Print / Save PDF</button>
+          </div>
+        </aside>
+
+        <main class="content">
+          <section class="intro-panel" aria-label="Customer information">
+            <div class="field">
+              <label for="customerName">Customer / Organization</label>
+              <!-- Added standard name properties so fields register with the data endpoint -->
+              <input id="customerName" name="customerName" type="text" placeholder="e.g., Customer name" required />
+            </div>
+            <div class="field">
+              <label for="respondentName">Respondent Name</label>
+              <input id="respondentName" name="respondentName" type="text" placeholder="Optional" />
+            </div>
+            <div class="field">
+              <label for="respondentRole">Role / Function</label>
+              <input id="respondentRole" name="respondentRole" type="text" placeholder="e.g., Project Manager, IT Owner" required />
+            </div>
+          </section>
+
+          <div id="sections"></div>
+
+          <!-- Added a dedicated primary Submit Button directly into the page workflow layout -->
+          <button type="submit" class="button-like submit-btn">Submit Survey Responses</button>
+
+          <section class="footer-note">
+            <div>
+              <strong>Thank you for your feedback.</strong><br />
+              Your responses help DHS prioritize service improvements, communication quality, security, and operational excellence.
+            </div>
+            <button class="primary-btn" type="button" onclick="validateSurvey()">Review Completion</button>
+          </section>
+        </main>
+      </div>
     </div>
-  </div>
+  </form>
 
   <div class="toast" id="toast"></div>
 
@@ -801,7 +818,9 @@
 
       const formData = new FormData(document.getElementById("surveyForm"));
       for (const [key, value] of formData.entries()) {
-        data.responses[key] = value;
+        if(key !== "access_key" && key !== "from_name" && key !== "subject") {
+          data.responses[key] = value;
+        }
       }
       return data;
     }
