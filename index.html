@@ -182,7 +182,7 @@
     .nav-list {
       display: grid;
       gap: 7px;
-      margin: 0 0 18px;
+      margin: 0;
       padding: 0;
       list-style: none;
     }
@@ -220,39 +220,32 @@
     .actions {
       display: grid;
       gap: 10px;
+      margin-top: 18px;
     }
 
     button, .button-like {
       appearance: none;
       border: 0;
       border-radius: 14px;
-      padding: 12px 16px;
+      padding: 14px 16px;
       font-weight: 800;
       cursor: pointer;
       font-family: inherit;
       transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
       text-align: center;
+      width: 100%;
     }
 
     button:hover { transform: translateY(-1px); }
 
-    .primary-btn {
+    .submit-btn {
       background: var(--primary);
       color: white;
+      font-size: 15px;
       box-shadow: 0 10px 22px rgba(255, 122, 26, 0.27);
     }
 
-    .submit-btn {
-      background: var(--blue);
-      color: white;
-      box-shadow: 0 10px 22px rgba(30, 79, 215, 0.25);
-      width: 100%;
-      padding: 16px;
-      font-size: 16px;
-      margin-top: 15px;
-    }
-
-    .secondary-btn {
+    .primary-btn {
       background: #eef2f7;
       color: var(--text);
     }
@@ -524,13 +517,11 @@
   </style>
 </head>
 <body>
-  <!-- Embedded the Data Endpoint inside the HTML Form Element Structuring -->
   <form id="surveyForm" action="https://api.web3forms.com/submit" method="POST">
     <input type="hidden" name="access_key" value="330fbc2a-f9ac-4997-889b-1dfa83476d56">
     
-    <!-- Hidden input configuration to provide native dashboard page redirect control -->
-    <input type="hidden" name="from_name" value="DHS Survey Portal">
-    <input type="hidden" name="subject" value="New Customer Satisfaction Feedback Received">
+    <input type="hidden" name="from_name" value="DHS Survey System">
+    <input type="hidden" name="subject" value="New DHS Customer Feedback Form Submission">
 
     <div class="page-shell">
       <header class="hero">
@@ -562,6 +553,7 @@
             <small id="progressText">0%</small>
           </div>
           <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+          
           <ul class="nav-list">
             <li><a href="#overall"><span class="nav-bullet">1</span>Overall Satisfaction</a></li>
             <li><a href="#availability"><span class="nav-bullet">2</span>Availability & Stability</a></li>
@@ -573,10 +565,10 @@
             <li><a href="#security"><span class="nav-bullet">8</span>Security & Compliance</a></li>
             <li><a href="#feedback"><span class="nav-bullet">9</span>Open Feedback</a></li>
           </ul>
+
           <div class="actions">
-            <button class="primary-btn" type="button" onclick="downloadJSON()">Export JSON</button>
-            <button class="secondary-btn" type="button" onclick="downloadCSV()">Export CSV</button>
-            <button class="secondary-btn" type="button" onclick="window.print()">Print / Save PDF</button>
+            <!-- Consolidated old local utility buttons into a primary submission action layout -->
+            <button type="submit" class="button-like submit-btn">Submit Survey</button>
           </div>
         </aside>
 
@@ -584,7 +576,6 @@
           <section class="intro-panel" aria-label="Customer information">
             <div class="field">
               <label for="customerName">Customer / Organization</label>
-              <!-- Added standard name properties so fields register with the data endpoint -->
               <input id="customerName" name="customerName" type="text" placeholder="e.g., Customer name" required />
             </div>
             <div class="field">
@@ -599,15 +590,12 @@
 
           <div id="sections"></div>
 
-          <!-- Added a dedicated primary Submit Button directly into the page workflow layout -->
-          <button type="submit" class="button-like submit-btn">Submit Survey Responses</button>
-
           <section class="footer-note">
             <div>
               <strong>Thank you for your feedback.</strong><br />
               Your responses help DHS prioritize service improvements, communication quality, security, and operational excellence.
             </div>
-            <button class="primary-btn" type="button" onclick="validateSurvey()">Review Completion</button>
+            <button class="primary-btn" type="button" onclick="validateSurvey()">Check Fields</button>
           </section>
         </main>
       </div>
@@ -727,7 +715,7 @@
     function createRating(question) {
       const options = [1,2,3,4,5].map(value => `
         <div>
-          <input type="radio" id="${question.name}_${value}" name="${question.name}" value="${value}" />
+          <input type="radio" id="${question.name}_${value}" name="${question.name}" value="${value}" required />
           <label for="${question.name}_${value}">
             <strong>${value}</strong>
             <span>${ratingLabels[value - 1]}</span>
@@ -744,11 +732,11 @@
       return `
         <div class="yes-no" role="radiogroup" aria-label="${question.text}">
           <label class="pill-radio">
-            <input type="radio" name="${question.name}" value="No" onchange="toggleFollowUp('${question.name}', false)" />
+            <input type="radio" name="${question.name}" value="No" onchange="toggleFollowUp('${question.name}', false)" required />
             <span>No</span>
           </label>
           <label class="pill-radio">
-            <input type="radio" name="${question.name}" value="Yes" onchange="toggleFollowUp('${question.name}', true)" />
+            <input type="radio" name="${question.name}" value="Yes" onchange="toggleFollowUp('${question.name}', true)" required />
             <span>Yes</span>
           </label>
         </div>
@@ -810,9 +798,7 @@
     function getFormData() {
       const data = {
         customerName: document.getElementById("customerName").value.trim(),
-        respondentName: document.getElementById("respondentName").value.trim(),
         respondentRole: document.getElementById("respondentRole").value.trim(),
-        submittedAt: new Date().toISOString(),
         responses: {}
       };
 
@@ -843,10 +829,10 @@
     function validateSurvey() {
       const data = getFormData();
       const missing = requiredQuestionNames().filter(name => !data.responses[name]);
-      if (missing.length === 0) {
-        showToast("All required rating questions are complete.");
+      if (missing.length === 0 && data.customerName && data.respondentRole) {
+        showToast("All required rating questions and information fields are complete.");
       } else {
-        showToast(`${missing.length} required question(s) still need a response.`);
+        showToast("Please ensure all customer info and required ratings are filled.");
       }
     }
 
@@ -856,51 +842,6 @@
       toast.classList.add("show");
       clearTimeout(window.__toastTimer);
       window.__toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
-    }
-
-    function downloadFile(filename, content, type) {
-      const blob = new Blob([content], { type });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    }
-
-    function downloadJSON() {
-      const data = getFormData();
-      downloadFile("dhs_customer_survey_response.json", JSON.stringify(data, null, 2), "application/json");
-      showToast("JSON export created.");
-    }
-
-    function escapeCSV(value) {
-      const stringValue = value === undefined || value === null ? "" : String(value);
-      return `"${stringValue.replace(/"/g, '""')}"`;
-    }
-
-    function downloadCSV() {
-      const data = getFormData();
-      const rows = [["Field", "Response"]];
-      rows.push(["Customer / Organization", data.customerName]);
-      rows.push(["Respondent Name", data.respondentName]);
-      rows.push(["Role / Function", data.respondentRole]);
-      rows.push(["Submitted At", data.submittedAt]);
-
-      surveySections.forEach(section => {
-        section.questions.forEach(question => {
-          rows.push([`${section.title} - ${question.text}`, data.responses[question.name] || ""]);
-          if (question.followUpName) {
-            rows.push([`${section.title} - Details`, data.responses[question.followUpName] || ""]);
-          }
-        });
-      });
-
-      const csv = rows.map(row => row.map(escapeCSV).join(",")).join("\n");
-      downloadFile("dhs_customer_survey_response.csv", csv, "text/csv");
-      showToast("CSV export created.");
     }
 
     renderSections();
