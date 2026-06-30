@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DHS Customer Satisfaction Survey</title>
+  <style>
+    :root {
+      /* Changed to a solid light background color */
+      --bg: #f1f4f9; 
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --text: #172033;
+      --muted: #64748b;
+      --line: #dbe3ef;
+      --primary: #ff7a1a;
+      --primary-dark: #d85f00;
+      --primary-soft: #fff1e6;
+      --blue: #1e4fd7;
+      --blue-soft: #eef4ff;
+      --green: #10b981;
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.09);
+      --radius: 20px;
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      /* Removed all radial-gradients to apply only the solid background color */
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .page-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 32px auto 56px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #101c3d 0%, #1b3a72 56%, #ff7a1a 145%);
+      color: #fff;
+      border-radius: 28px;
+      padding: 40px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      right: -130px;
+      top: -150px;
+      background: rgba(255, 255, 255, 0.09);
+      border-radius: 50%;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.6fr 0.85fr;
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.13);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      font-size: 13px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .hero h1 {
+      font-size: clamp(32px, 4vw, 54px);
+      line-height: 1.04;
+      margin: 20px 0 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .hero p {
+      color: rgba(255, 255, 255, 0.82);
+      margin: 0;
+      max-width: 720px;
+      font-size: 17px;
+    }
+
+    .hero-card {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(12px);
+      border-radius: 22px;
+      padding: 22px;
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .metric {
+      background: rgba(255,255,255,0.11);
+      border-radius: 16px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 23px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .metric span {
+      display: block;
+      color: rgba(255,255,255,0.72);
+      font-size: 12px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 24px;
+      margin-top: 24px;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      /* Adjusted to a solid white backdrop instead of translucent blur */
+      background: #ffffff;
+      border: 1px solid rgba(219, 227, 239, 0.95);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .progress-label small {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .progress-track {
+      height: 11px;
+      background: #e8eef7;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--blue));
+      border-radius: 999px;
+      transition: width 0.2s ease;
+    }
+
+    .nav-list {
+      display: grid;
+      gap: 7px;
+      margin: 0 0 18px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .nav-list a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 14px;
+      padding: 10px 12px;
+      border-radius: 13px;
+      border: 1px solid transparent;
+    }
+
+    .nav-list a:hover {
+      background: var(--blue-soft);
+      border-color: #d9e6ff;
+    }
+
+    .nav-bullet {
+      width: 22px;
+      height: 22px;
+      border-radius: 8px;
+      display: inline-grid;
+      place-items: center;
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      font-size: 12px;
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+
+    .actions {
+      display: grid;
+      gap: 10px;
+    }
+
+    button, .button-like {
+      appearance: none;
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      text-align: center;
+    }
+
+    button:hover { transform: translateY(-1px); }
+
+    .primary-btn {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 10px 22px rgba(255, 122, 26, 0.27);
+    }
+
+    .secondary-btn {
+      background: #eef2f7;
+      color: var(--text);
+    }
+
+    .content {
+      display: grid;
+      gap: 18px;
+    }
+
+    .intro-panel,
+    .section {
+      background: var(--surface);
+      border: 1px solid rgba(219, 227, 239, 0.95);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+    }
+
+    .intro-panel {
+      padding: 24px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    label, .question-title {
+      font-weight: 800;
+      color: #1d2a44;
+    }
+
+    input[type="text"], input[type="email"], select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font: inherit;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(30, 79, 215, 0.11);
+    }
+
+    .section-header {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      padding: 22px 24px;
+      border-bottom: 1px solid var(--line);
+      background: #ffffff; /* Changed panel header background to a flat solid color */
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+
+    .section-icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: var(--blue-soft);
+      font-size: 24px;
+      flex: 0 0 auto;
+    }
+
+    .section-header h2 {
+      margin: 0;
+      letter-spacing: -0.02em;
+      font-size: 21px;
+    }
+
+    .section-header p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .questions {
+      display: grid;
+      gap: 16px;
+      padding: 20px 24px 24px;
+    }
+
+    .question-card {
+      background: var(--surface-soft);
+      border: 1px solid #e5ecf5;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .question-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+
+    .required {
+      color: var(--primary-dark);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+      margin-top: 3px;
+    }
+
+    .scale {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .scale input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .scale label {
+      display: grid;
+      gap: 4px;
+      justify-items: center;
+      padding: 12px 6px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 14px;
+      cursor: pointer;
+      min-height: 76px;
+      transition: all 0.15s ease;
+      text-align: center;
+    }
+
+    .scale label strong {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      background: #eff4fa;
+      color: #25324b;
+      font-size: 14px;
+    }
+
+    .scale label span {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .scale input:checked + label {
+      background: var(--primary-soft);
+      border-color: rgba(255, 122, 26, 0.55);
+      box-shadow: 0 9px 18px rgba(255, 122, 26, 0.13);
+    }
+
+    .scale input:checked + label strong {
+      background: var(--primary);
+      color: white;
+    }
+
+    .yes-no {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .pill-radio input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .pill-radio span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 999px;
+      padding: 10px 15px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .pill-radio input:checked + span {
+      background: var(--blue-soft);
+      border-color: rgba(30,79,215,0.4);
+      color: var(--blue);
+    }
+
+    .conditional {
+      display: none;
+      margin-top: 14px;
+    }
+
+    .conditional.show { display: block; }
+
+    textarea {
+      resize: vertical;
+      min-height: 110px;
+    }
+
+    .scale-help {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .footer-note {
+      background: #0f172a;
+      color: rgba(255,255,255,0.8);
+      border-radius: 22px;
+      padding: 22px 24px;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .footer-note strong { color: #fff; }
+
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      background: #101827;
+      color: #fff;
+      padding: 14px 18px;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      transform: translateY(24px);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      z-index: 20;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 920px) {
+      .hero-grid, .layout, .intro-panel { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .scale { grid-template-columns: 1fr; }
+      .scale label { grid-template-columns: 40px 1fr; justify-items: start; min-height: auto; text-align: left; }
+      .scale label strong { grid-row: span 2; }
+      .footer-note { display: block; }
+      .footer-note button { margin-top: 14px; width: 100%; }
+    }
+
+    @media print {
+      body { background: white; }
+      .sidebar, .actions, .toast { display: none !important; }
+      .page-shell { width: 100%; margin: 0; }
+      .layout { display: block; }
+      .hero, .section, .intro-panel, .footer-note { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Rest of your original body elements remain completely unchanged -->
+  <div class="page-shell">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">DHS Customer Feedback</div>
+          <h1>Customer Satisfaction Survey</h1>
+          <p>
+            Help us improve the quality, reliability, security, and responsiveness of DELMIA Hosted Services.
+            Most questions use a 1–5 scale, with optional comments for open feedback.
+          </p>
+        </div>
+        <div class="hero-card">
+          <strong>Rating scale</strong>
+          <p style="margin-top:8px;font-size:14px;">1 = Very dissatisfied / poor, 5 = Very satisfied / excellent</p>
+          <div class="metric-row">
+            <div class="metric"><strong>9</strong><span>Sections</span></div>
+            <div class="metric"><strong>23</strong><span>Questions</span></div>
+            <div class="metric"><strong>5</strong><span>Rating levels</span></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="progress-label">
+          <span>Completion</span>
+          <small id="progressText">0%</small>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        <ul class="nav-list">
+          <li><a href="#overall"><span class="nav-bullet">1</span>Overall Satisfaction</a></li>
+          <li><a href="#availability"><span class="nav-bullet">2</span>Availability & Stability</a></li>
+          <li><a href="#support"><span class="nav-bullet">3</span>Support</a></li>
+          <li><a href="#communication"><span class="nav-bullet">4</span>Communication</a></li>
+          <li><a href="#incident"><span class="nav-bullet">5</span>Incident Management</a></li>
+          <li><a href="#expertise"><span class="nav-bullet">6</span>Technical Expertise</a></li>
+          <li><a href="#change"><span class="nav-bullet">7</span>Change Management</a></li>
+          <li><a href="#security"><span class="nav-bullet">8</span>Security & Compliance</a></li>
+          <li><a href="#feedback"><span class="nav-bullet">9</span>Open Feedback</a></li>
+        </ul>
+        <div class="actions">
+          <button class="primary-btn" type="button" onclick="downloadJSON()">Export JSON</button>
+          <button class="secondary-btn" type="button" onclick="downloadCSV()">Export CSV</button>
+          <button class="secondary-btn" type="button" onclick="window.print()">Print / Save PDF</button>
+        </div>
+      </aside>
+
+      <main class="content">
+        <section class="intro-panel" aria-label="Customer information">
+          <div class="field">
+            <label for="customerName">Customer / Organization</label>
+            <input id="customerName" name="customerName" type="text" placeholder="e.g., Customer name" />
+          </div>
+          <div class="field">
+            <label for="respondentName">Respondent Name</label>
+            <input id="respondentName" name="respondentName" type="text" placeholder="Optional" />
+          </div>
+          <div class="field">
+            <label for="respondentRole">Role / Function</label>
+            <input id="respondentRole" name="respondentRole" type="text" placeholder="e.g., Project Manager, IT Owner" />
+          </div>
+        </section>
+
+        <form id="surveyForm">
+          <div id="sections"></div>
+        </form>
+
+        <section class="footer-note">
+          <div>
+            <strong>Thank you for your feedback.</strong><br />
+            Your responses help DHS prioritize service improvements, communication quality, security, and operational excellence.
+          </div>
+          <button class="primary-btn" type="button" onclick="validateSurvey()">Review Completion</button>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const ratingLabels = [
+      "Very poor",
+      "Poor",
+      "Neutral",
+      "Good",
+      "Excellent"
+    ];
+
+    const surveySections = [
+      {
+        id: "overall",
+        icon: "⭐",
+        title: "Overall Hosting Service Satisfaction",
+        description: "Your overall experience with DHS hosting services.",
+        questions: [
+          { type: "rating", name: "overall_experience", text: "How would you rate your overall experience with our hosting services?" }
+        ]
+      },
+      {
+        id: "availability",
+        icon: "🟢",
+        title: "System Availability and Stability",
+        description: "Availability, reliability, and unexpected interruptions.",
+        questions: [
+          { type: "rating", name: "availability_satisfaction", text: "How satisfied are you with the availability of the hosted environment?" },
+          { type: "rating", name: "platform_stability", text: "How would you rate the overall stability and reliability of the platform?" },
+          { type: "yesno", name: "unexpected_interruptions", text: "Have you experienced any unexpected service interruptions in the last 6 months?", followUpName: "unexpected_interruptions_details", followUpText: "Please share more details about the interruption, including date, business impact, and ticket reference if available." }
+        ]
+      },
+      {
+        id: "support",
+        icon: "🤝",
+        title: "Support and Responsiveness",
+        description: "Responsiveness, escalation, and critical incident support.",
+        questions: [
+          { type: "rating", name: "support_responsiveness", text: "How satisfied are you with the responsiveness of the DHS support team?" },
+          { type: "rating", name: "right_person_access", text: "How would you rate the ease of reaching the right person to resolve your issue?" },
+          { type: "rating", name: "critical_incident_support", text: "How satisfied are you with the quality of support provided during critical incidents?" }
+        ]
+      },
+      {
+        id: "communication",
+        icon: "💬",
+        title: "Communication",
+        description: "General updates, ticket lifecycle visibility, and maintenance communication.",
+        questions: [
+          { type: "rating", name: "general_service_updates", text: "How effective is our communication regarding general service updates?" },
+          { type: "rating", name: "ticket_lifecycle_updates", text: "Do you feel you are kept well-informed during the lifecycle of a support ticket?" },
+          { type: "rating", name: "maintenance_interruption_communication", text: "How would you rate the communication around maintenance activities or service interruptions?" }
+        ]
+      },
+      {
+        id: "incident",
+        icon: "🛠️",
+        title: "Incident and Problem Management",
+        description: "RCA quality and permanent resolution of recurring issues.",
+        questions: [
+          { type: "rating", name: "rca_quality", text: "How would you rate the quality of the Root Cause Analysis (RCA) reports provided after an incident?" },
+          { type: "rating", name: "recurring_issue_resolution", text: "Do you feel that recurring issues are effectively identified and permanently resolved?" }
+        ]
+      },
+      {
+        id: "expertise",
+        icon: "🧠",
+        title: "Technical Expertise",
+        description: "DHS knowledge, confidence, and technical guidance.",
+        questions: [
+          { type: "rating", name: "technical_knowledge", text: "How would you rate the technical knowledge and expertise of the DHS team?" },
+          { type: "rating", name: "support_confidence", text: "How confident are you in DHS’s ability to support your hosted applications and infrastructure?" },
+          { type: "rating", name: "technical_guidance", text: "How effective is the DHS team in providing technical guidance and recommendations?" }
+        ]
+      },
+      {
+        id: "change",
+        icon: "📅",
+        title: "Change and Maintenance Management",
+        description: "Planning, business impact, and coordination of planned changes.",
+        questions: [
+          { type: "rating", name: "maintenance_planning_execution", text: "How satisfied are you with the planning and execution of maintenance activities?" },
+          { type: "rating", name: "business_impact_minimization", text: "How effective is DHS in minimizing business impact during changes or upgrades?" },
+          { type: "rating", name: "planned_change_coordination", text: "How satisfied are you with the coordination and communication related to planned changes?" }
+        ]
+      },
+      {
+        id: "security",
+        icon: "🔐",
+        title: "Security & Compliance",
+        description: "Security expectations, data protection, and proactive risk management.",
+        questions: [
+          { type: "rating", name: "security_compliance_expectations", text: "How would you rate DHS’s ability to meet your organization’s security and compliance expectations?" },
+          { type: "rating", name: "access_data_operational_security", text: "How confident are you in DHS’s processes for access control, data protection, and operational security?" },
+          { type: "rating", name: "proactive_security_risk", text: "Do you feel DHS demonstrates a proactive approach toward security and risk management?" }
+        ]
+      },
+      {
+        id: "feedback",
+        icon: "✍️",
+        title: "Open Feedback",
+        description: "Free-text comments to help DHS improve the service.",
+        questions: [
+          { type: "textarea", name: "most_valued_aspects", text: "What aspects of the DHS service do you value the most?" },
+          { type: "textarea", name: "desired_improvements", text: "What improvements or additional capabilities would you like to see from DHS?" },
+          { type: "textarea", name: "additional_feedback", text: "Is there any additional feedback or suggestions you would like to share with the DHS team?" }
+        ]
+      }
+    ];
+
+    function createRating(question) {
+      const options = [1,2,3,4,5].map(value => `
+        <div>
+          <input type="radio" id="${question.name}_${value}" name="${question.name}" value="${value}" />
+          <label for="${question.name}_${value}">
+            <strong>${value}</strong>
+            <span>${ratingLabels[value - 1]}</span>
+          </label>
+        </div>
+      `).join("");
+      return `
+        <div class="scale" role="radiogroup" aria-label="${question.text}">${options}</div>
+        <div class="scale-help"><span>1 = Low satisfaction</span><span>5 = High satisfaction</span></div>
+      `;
+    }
+
+    function createYesNo(question) {
+      return `
+        <div class="yes-no" role="radiogroup" aria-label="${question.text}">
+          <label class="pill-radio">
+            <input type="radio" name="${question.name}" value="No" onchange="toggleFollowUp('${question.name}', false)" />
+            <span>No</span>
+          </label>
+          <label class="pill-radio">
+            <input type="radio" name="${question.name}" value="Yes" onchange="toggleFollowUp('${question.name}', true)" />
+            <span>Yes</span>
+          </label>
+        </div>
+        <div class="conditional" id="${question.name}_followup">
+          <label for="${question.followUpName}">${question.followUpText}</label>
+          <textarea id="${question.followUpName}" name="${question.followUpName}" placeholder="Add details here..."></textarea>
+        </div>
+      `;
+    }
+
+    function createTextarea(question) {
+      return `
+        <textarea name="${question.name}" placeholder="Type your response here..."></textarea>
+      `;
+    }
+
+    function renderQuestion(question, index) {
+      let body = "";
+      if (question.type === "rating") body = createRating(question);
+      if (question.type === "yesno") body = createYesNo(question);
+      if (question.type === "textarea") body = createTextarea(question);
+
+      const requiredText = question.type === "textarea" ? "Optional" : "Required";
+      return `
+        <article class="question-card">
+          <div class="question-top">
+            <div class="question-title">${index}. ${question.text}</div>
+            <div class="required">${requiredText}</div>
+          </div>
+          ${body}
+        </article>
+      `;
+    }
+
+    function renderSections() {
+      const target = document.getElementById("sections");
+      target.innerHTML = surveySections.map((section) => `
+        <section class="section" id="${section.id}">
+          <div class="section-header">
+            <div class="section-icon">${section.icon}</div>
+            <div>
+              <h2>${section.title}</h2>
+              <p>${section.description}</p>
+            </div>
+          </div>
+          <div class="questions">
+            ${section.questions.map((question, index) => renderQuestion(question, index + 1)).join("")}
+          </div>
+        </section>
+      `).join("");
+    }
+
+    function toggleFollowUp(name, show) {
+      const el = document.getElementById(`${name}_followup`);
+      if (el) el.classList.toggle("show", show);
+      updateProgress();
+    }
+
+    function getFormData() {
+      const data = {
+        customerName: document.getElementById("customerName").value.trim(),
+        respondentName: document.getElementById("respondentName").value.trim(),
+        respondentRole: document.getElementById("respondentRole").value.trim(),
+        submittedAt: new Date().toISOString(),
+        responses: {}
+      };
+
+      const formData = new FormData(document.getElementById("surveyForm"));
+      for (const [key, value] of formData.entries()) {
+        data.responses[key] = value;
+      }
+      return data;
+    }
+
+    function requiredQuestionNames() {
+      return surveySections.flatMap(section => section.questions)
+        .filter(q => q.type !== "textarea")
+        .map(q => q.name);
+    }
+
+    function updateProgress() {
+      const data = getFormData();
+      const required = requiredQuestionNames();
+      const answered = required.filter(name => data.responses[name]).length;
+      const percent = Math.round((answered / required.length) * 100);
+      document.getElementById("progressFill").style.width = `${percent}%`;
+      document.getElementById("progressText").textContent = `${percent}%`;
+    }
+
+    function validateSurvey() {
+      const data = getFormData();
+      const missing = requiredQuestionNames().filter(name => !data.responses[name]);
+      if (missing.length === 0) {
+        showToast("All required rating questions are complete.");
+      } else {
+        showToast(`${missing.length} required question(s) still need a response.`);
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    function downloadFile(filename, content, type) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadJSON() {
+      const data = getFormData();
+      downloadFile("dhs_customer_survey_response.json", JSON.stringify(data, null, 2), "application/json");
+      showToast("JSON export created.");
+    }
+
+    function escapeCSV(value) {
+      const stringValue = value === undefined || value === null ? "" : String(value);
+      return `"${stringValue.replace(/"/g, '""')}"`;
+    }
+
+    function downloadCSV() {
+      const data = getFormData();
+      const rows = [["Field", "Response"]];
+      rows.push(["Customer / Organization", data.customerName]);
+      rows.push(["Respondent Name", data.respondentName]);
+      rows.push(["Role / Function", data.respondentRole]);
+      rows.push(["Submitted At", data.submittedAt]);
+
+      surveySections.forEach(section => {
+        section.questions.forEach(question => {
+          rows.push([`${section.title} - ${question.text}`, data.responses[question.name] || ""]);
+          if (question.followUpName) {
+            rows.push([`${section.title} - Details`, data.responses[question.followUpName] || ""]);
+          }
+        });
+      });
+
+      const csv = rows.map(row => row.map(escapeCSV).join(",")).join("\n");
+      downloadFile("dhs_customer_survey_response.csv", csv, "text/csv");
+      showToast("CSV export created.");
+    }
+
+    renderSections();
+    document.addEventListener("change", updateProgress);
+    document.addEventListener("input", updateProgress);
+    updateProgress();
+  </script>
+</body>
+</html>
